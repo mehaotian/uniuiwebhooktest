@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "build:release": "node api/build.js "
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mehaotian/uniuiwebhooktest.git"
