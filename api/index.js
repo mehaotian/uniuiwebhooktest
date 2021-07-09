@@ -48,41 +48,40 @@ function send(req, res, body) {
 function run(req, res) {
 	var handler = createHandler({
 		path: '/push',
-		secret: 'root'
+		secret: 'test'
 	})
 
 	handler(req, res, function(err) {
 		if (err) {
 			res.statusCode = 404
+			console.log(err);
 			res.end('error:' + err)
 		} else {
 			const body = req.body
-			// if (!body) {
-				res.json({
-					msg: '没有请求',
-					body: req.body,
-					query: req.query,
-					cookies: req.cookies,
-				});
-				console.log(req.body);
-				return
-			// 	return
-			// }
+			res.json({
+				msg: '没有请求',
+				body: req.body,
+				query: req.query,
+				cookies: req.cookies,
+			});
+			console.log(req.body);
+			return
+
 			console.log(body);
-			let pusher = body.pusher && body.pusher.email || ''
-			if (userWhiteList.indexOf(pusher) !== -1) {
-				// send(req, res, '### 本周 Github Closed Issues:\n\n')
-				main(req, res, body)
-			} else {
-				res.statusCode = 404
-				// res.end('error:' + pusher + '没有权限')
-				res.json({
-					msg: '没有权限',
-					body: req.body,
-					query: req.query,
-					cookies: req.cookies,
-				});
-			}
+			// let pusher = body.pusher && body.pusher.email || ''
+			// if (userWhiteList.indexOf(pusher) !== -1) {
+			// 	// send(req, res, '### 本周 Github Closed Issues:\n\n')
+			// 	main(req, res, body)
+			// } else {
+			// 	res.statusCode = 404
+			// 	// res.end('error:' + pusher + '没有权限')
+			// 	res.json({
+			// 		msg: '没有权限',
+			// 		body: req.body,
+			// 		query: req.query,
+			// 		cookies: req.cookies,
+			// 	});
+			// }
 		}
 	})
 }
