@@ -8,7 +8,7 @@ let urls = {
 	// dd:'https://oapi.dingtalk.com/robot/send?access_token=88febddb5af072227b7e0de1f6a88f43d7aaed872523244102172facf9442899'
 }
 // 用户白名单
-const userWhiteList = ['490272692@qq.com', 'tianjiaxing2016@outlook.com']
+const userWhiteList = ['mehaotian', 'Fasttian']
 
 const password = 'root'
 
@@ -58,7 +58,7 @@ function run(req, res) {
 			res.end('error:' + err)
 		} else {
 			const body = req.body
-			if(!body){
+			if (!body) {
 				res.json({
 					msg: '没有请求',
 					body: req.body,
@@ -66,43 +66,48 @@ function run(req, res) {
 				});
 				return
 			}
-			let pusher = (body.pusher && body.pusher.email) || ''
-			if (userWhiteList.indexOf(pusher) !== -1) {
-				// send(req, res, '### 本周 Github Closed Issues:\n\n')
-				main(req, res, body)
-			} else {
-				// res.statusCode = 404
-				// res.end('error:' + pusher + '没有权限')
-				// res.json({
-				// 	msg: '没有权限',
-				// 	body: req.body,
-				// 	query: req.query,
-				// 	cookies: req.cookies,
-				// });
+
+			if (body.action === released) {
+				let user = (body.release && body.release.author && body.release.author.login) || ''
+				if (userWhiteList.indexOf(user) !== -1) {
+					// send(req, res, '### 本周 Github Closed Issues:\n\n')
+					main(req, res, body)
+				}
 			}
+			// let pusher = (body.pusher && body.pusher.email) || ''
+			// if (userWhiteList.indexOf(pusher) !== -1) {
+			// 	main(req, res, body)
+			// } else {
+			// 	res.statusCode = 404
+			// 	res.end('error:' + pusher + '没有权限')
+			// 	res.json({
+			// 		msg: '没有权限',
+			// 		body: req.body,
+			// 		query: req.query,
+			// 		cookies: req.cookies,
+			// 	});
+			// }
 		}
 	})
 }
 
 function main(req, res, body) {
-	let commits = body.commits
+	let commits = body.release
 
-	let commit = commits.find(v => {
-		let message = v.message.split(' ')
-		if (message[0] === 'publish') return true
-		return false
-	})
+	// let commit = commits.find(v => {
+	// 	let message = v.message.split(' ')
+	// 	if (message[0] === 'publish') return true
+	// 	return false
+	// })
 	// let message = 'publish v1.3.5'
 
-	let message = ''
-	if (commit) {
-		message = commit.message
-	} else {
+	let message = commit.tag_name
+	let releaseContent = commit.body
+	if (!(message && releaseContent)) {
 		res.json({
-			msg: '非 publish 提交 ，不发送信息',
-			body: req.body,
-			query: req.query,
-			cookies: req.cookies,
+			msg: 'relsease 不存在',
+			body: body,
+			content: commit
 		});
 	}
 
@@ -118,19 +123,18 @@ function main(req, res, body) {
 		r.getRlease().then(res => {
 			// console.log(res.data);
 			let release = res.data
-			message = message.split(' ')
-			if (message[0] === 'publish') {
-				let logContent = readChangelog(release)
-				if (logContent.version === message[1]) {
-					logContent.log = logContent.log.split('\n')
-					console.log(logContent.log);
-					let releaseMessage = '\n\n### 本周 uni-ui release 详情::\n\n'
-					logContent.log.forEach(v => {
-						releaseMessage += `> ${v}\n`
-					})
-					content += releaseMessage
-				}
+
+			let logContent = readChangelog(release)
+			if (logContent.version === message) {
+				logContent.log = releaseContent.split('\n')
+				console.log(logContent.log);
+				let releaseMessage = '\n\n### 本周 uni-ui release 详情::\n\n'
+				logContent.log.forEach(v => {
+					releaseMessage += `> ${v}\n`
+				})
+				content += releaseMessage
 			}
+
 			send(req, res, content)
 		}).catch(err => {
 			console.log(err);
