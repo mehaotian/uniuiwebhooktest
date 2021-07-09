@@ -43,41 +43,45 @@ function run(req, res) {
 			res.statusCode = 404
 			res.end('success:' + err)
 		} else {
-			send(req, res,'### 本周 Github Closed Issues:\n\n')
+			send(req, res, '### 本周 Github Closed Issues:\n\n')
 		}
 	})
 }
-let message = 'publish v1.3.5'
-r.getIssues().then(res => {
-	let data = res.data
-	let content = '### 本周 Github Closed Issues:\n\n'
-	console.log(data);
-	data.forEach(v => {
-		content += `> - [uni-ui] Issue closed: [#${v.number} ${v.title}](${v.html_url})\n`
-	})
-	console.log(content);
-	
-	r.getRlease().then(res => {
-		// console.log(res.data);
-		let release = res.data
-		message = message.split(' ')
-		if (message[0] === 'publish') {
-			let logContent = readChangelog(release)
-			if (logContent.version === message[1]) {
-				logContent.log = logContent.log.split('\n')
-				console.log(logContent.log);
-				let releaseMessage = '\n\n### 本周 uni-ui release 详情::\n\n'
-				logContent.log.forEach(v => {
-					releaseMessage += `> ${v}\n`
-				})
-				content += releaseMessage
+
+function main() {
+
+	let message = 'publish v1.3.5'
+	r.getIssues().then(res => {
+		let data = res.data
+		let content = '### 本周 Github Closed Issues:\n\n'
+		console.log(data);
+		data.forEach(v => {
+			content += `> - [uni-ui] Issue closed: [#${v.number} ${v.title}](${v.html_url})\n`
+		})
+		console.log(content);
+
+		r.getRlease().then(res => {
+			// console.log(res.data);
+			let release = res.data
+			message = message.split(' ')
+			if (message[0] === 'publish') {
+				let logContent = readChangelog(release)
+				if (logContent.version === message[1]) {
+					logContent.log = logContent.log.split('\n')
+					console.log(logContent.log);
+					let releaseMessage = '\n\n### 本周 uni-ui release 详情::\n\n'
+					logContent.log.forEach(v => {
+						releaseMessage += `> ${v}\n`
+					})
+					content += releaseMessage
+				}
 			}
-		}
-		send(null, null, content)
-	}).catch(err => {
-		console.log(err);
+			send(null, null, content)
+		}).catch(err => {
+			console.log(err);
+		})
 	})
-})
+}
 
 function readVersions(str) {
 	const versionRE = /##\s+([0-9\.]+).*/g
@@ -128,7 +132,7 @@ function readChangelog(md) {
 }
 
 
-// module.exports = run
+module.exports = run
 
 
 // function r(req, res) {
