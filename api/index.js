@@ -3,9 +3,9 @@ let createHandler = require('github-webhook-handler')
 let r = require('./build.js')
 let urls = {
 	// TODO 测试地址
-	// dd: 'https://oapi.dingtalk.com/robot/send?access_token=35294d1e06cf2e20e87d274b7d65b8aaac9cd2c4212263bb2e32657f4acd04c8'
+	dd: 'https://oapi.dingtalk.com/robot/send?access_token=35294d1e06cf2e20e87d274b7d65b8aaac9cd2c4212263bb2e32657f4acd04c8'
 	// TODO 正式地址
-	dd:'https://oapi.dingtalk.com/robot/send?access_token=88febddb5af072227b7e0de1f6a88f43d7aaed872523244102172facf9442899'
+	// dd:'https://oapi.dingtalk.com/robot/send?access_token=88febddb5af072227b7e0de1f6a88f43d7aaed872523244102172facf9442899'
 }
 // 用户白名单
 const userWhiteList = ['490272692@qq.com', 'tianjiaxing2016@outlook.com']
@@ -68,6 +68,7 @@ function main(req, res, body) {
 		return false
 	})
 	// let message = 'publish v1.3.5'
+	
 	let message = ''
 	if(commit){
 		message = commit.message
