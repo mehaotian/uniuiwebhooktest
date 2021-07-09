@@ -67,7 +67,7 @@ function run(req, res) {
 				return
 			}
 
-			if (body.action === released) {
+			if (body.action === 'released') {
 				let user = (body.release && body.release.author && body.release.author.login) || ''
 				if (userWhiteList.indexOf(user) !== -1) {
 					// send(req, res, '### 本周 Github Closed Issues:\n\n')
