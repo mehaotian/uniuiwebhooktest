@@ -101,13 +101,13 @@ function main(req, res, body) {
 	// })
 	// let message = 'publish v1.3.5'
 
-	let message = commit.tag_name
-	let releaseContent = commit.body
+	let message = commits.tag_name
+	let releaseContent = commits.body
 	if (!(message && releaseContent)) {
 		res.json({
 			msg: 'relsease 不存在',
 			body: body,
-			content: commit
+			content: commits
 		});
 	}
 
@@ -121,7 +121,6 @@ function main(req, res, body) {
 		console.log(content);
 
 		r.getRlease().then(res => {
-			// console.log(res.data);
 			let release = res.data
 
 			let logContent = readChangelog(release)
