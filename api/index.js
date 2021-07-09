@@ -48,7 +48,7 @@ function run(req, res) {
 		} else {
 			const body = req.body
 			if (!body) {
-				res.end('没有请求')
+				res.end('no request')
 				return
 			}
 
