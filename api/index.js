@@ -4,8 +4,8 @@ let r = require('./build.js')
 let urls = {
 	dd: 'https://oapi.dingtalk.com/robot/send?access_token=35294d1e06cf2e20e87d274b7d65b8aaac9cd2c4212263bb2e32657f4acd04c8'
 }
-
-
+// 用户白名单
+const userWhiteList = ['490272692@qq.com', 'tianjiaxing2016@outlook.com']
 
 const password = 'root'
 
@@ -27,7 +27,7 @@ function send(req, res, body) {
 	}).catch(err => {
 		if (res) {
 			res.statusCode = 201
-			res.end('success:' + err)
+			res.end('error:' + err)
 		}
 	});
 }
@@ -41,16 +41,37 @@ function run(req, res) {
 	handler(req, res, function(err) {
 		if (err) {
 			res.statusCode = 404
-			res.end('success:' + err)
+			res.end('error:' + err)
 		} else {
-			send(req, res, '### 本周 Github Closed Issues:\n\n')
+			const body = req.body
+			let pusher = body.pusher.email
+			if (userWhiteList.indexOf(pusher) !== -1) {
+				// send(req, res, '### 本周 Github Closed Issues:\n\n')
+				main(req, res, body)
+			} else {
+				res.statusCode = 404
+				res.end('error:' + pusher + '没有权限')
+			}
 		}
 	})
 }
 
-function main() {
+function main(req, res, body) {
+	let commits = body.commits
 
-	let message = 'publish v1.3.5'
+	let commit =  commits.find(v => {
+		let message = v.message.split(' ')
+		if(message[0] === 'publish') return true
+		return false
+	})
+	// let message = 'publish v1.3.5'
+	let message = ''
+	if(commit){
+		message = commit.message
+	}else{
+		res.end('非 publish 提交 ，不发送信息')
+	}
+
 	r.getIssues().then(res => {
 		let data = res.data
 		let content = '### 本周 Github Closed Issues:\n\n'
@@ -76,7 +97,7 @@ function main() {
 					content += releaseMessage
 				}
 			}
-			send(null, null, content)
+			send(req, res, content)
 		}).catch(err => {
 			console.log(err);
 		})
@@ -135,23 +156,3 @@ function readChangelog(md) {
 module.exports = run
 
 
-// function r(req, res) {
-// 	let url =
-// 		'https://oapi.dingtalk.com/robot/send?access_token=35294d1e06cf2e20e87d274b7d65b8aaac9cd2c4212263bb2e32657f4acd04c8'
-// 	axios({
-// 		method: 'post',
-// 		url: url,
-// 		data: {
-// 			msgtype: "markdown",
-// 			markdown: {
-// 				title: "uni-ui 本周工作",
-// 				text: `test`
-// 			}
-// 		}
-// 	}).then(() => {
-// 		res.end('success:' + JSON.stringify(req.body, null, 2))
-// 	}).catch(err => {
-// 		res.statusCode = 201
-// 		res.end('success:' + err)
-// 	});
-// }
