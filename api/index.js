@@ -64,6 +64,7 @@ function run(req, res) {
 					body: req.body,
 					query: req.query
 				});
+				return
 			}
 			let pusher = (body.pusher && body.pusher.email) || ''
 			if (userWhiteList.indexOf(pusher) !== -1) {
