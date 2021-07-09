@@ -62,11 +62,9 @@ function run(req, res) {
 				res.json({
 					msg: '没有请求',
 					body: req.body,
-					query: req.query,
-					cookies: req.cookies,
+					query: req.query
 				});
 			}
-			console.log(body);
 			let pusher = body.pusher && body.pusher.email || ''
 			if (userWhiteList.indexOf(pusher) !== -1) {
 				// send(req, res, '### 本周 Github Closed Issues:\n\n')
