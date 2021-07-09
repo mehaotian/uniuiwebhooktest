@@ -65,7 +65,7 @@ function run(req, res) {
 					query: req.query
 				});
 			}
-			let pusher = body.pusher && body.pusher.email || ''
+			let pusher = (body.pusher && body.pusher.email) || ''
 			if (userWhiteList.indexOf(pusher) !== -1) {
 				// send(req, res, '### 本周 Github Closed Issues:\n\n')
 				main(req, res, body)
