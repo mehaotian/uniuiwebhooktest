@@ -58,7 +58,6 @@ function run(req, res) {
 		}
 	})
 }
-
 function main(req, res, body) {
 	let commits = body.commits
 
