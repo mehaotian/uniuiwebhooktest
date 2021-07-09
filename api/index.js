@@ -57,15 +57,17 @@ function run(req, res) {
 			res.end('error:' + err)
 		} else {
 			const body = req.body
-			if (!body) {
+			// if (!body) {
 				res.json({
 					msg: '没有请求',
 					body: req.body,
 					query: req.query,
 					cookies: req.cookies,
 				});
+				console.log(req.body);
 				return
-			}
+			// 	return
+			// }
 			console.log(body);
 			let pusher = body.pusher && body.pusher.email || ''
 			if (userWhiteList.indexOf(pusher) !== -1) {
