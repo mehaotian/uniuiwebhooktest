@@ -16,6 +16,7 @@ function send(req, res, body) {
 	axios({
 		method: 'post',
 		url: urls.dd,
+		timeout:1000000,
 		data: {
 			msgtype: "markdown",
 			markdown: {
