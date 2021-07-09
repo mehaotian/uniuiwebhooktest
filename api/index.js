@@ -25,12 +25,22 @@ function send(req, res, body) {
 		}
 	}).then(() => {
 		if (res) {
-			res.end('success:' + JSON.stringify(req.body, null, 2))
+			res.json({
+				msg: '成功',
+				body: req.body,
+				query: req.query,
+				cookies: req.cookies,
+			});
 		}
 	}).catch(err => {
 		if (res) {
 			res.statusCode = 201
-			res.end('error:' + err)
+			res.json({
+				msg: '请求错误',
+				body: req.body,
+				query: req.query,
+				cookies: req.cookies,
+			});
 		}
 	});
 }
@@ -58,21 +68,27 @@ function run(req, res) {
 		}
 	})
 }
+
 function main(req, res, body) {
 	let commits = body.commits
 
-	let commit =  commits.find(v => {
+	let commit = commits.find(v => {
 		let message = v.message.split(' ')
-		if(message[0] === 'publish') return true
+		if (message[0] === 'publish') return true
 		return false
 	})
 	// let message = 'publish v1.3.5'
-	
+
 	let message = ''
-	if(commit){
+	if (commit) {
 		message = commit.message
-	}else{
-		res.end('非 publish 提交 ，不发送信息')
+	} else {
+		res.json({
+			msg: '非 publish 提交 ，不发送信息',
+			body: req.body,
+			query: req.query,
+			cookies: req.cookies,
+		});
 	}
 
 	r.getIssues().then(res => {
@@ -157,5 +173,3 @@ function readChangelog(md) {
 
 
 module.exports = run
-
-
