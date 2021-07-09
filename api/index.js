@@ -26,22 +26,11 @@ function send(req, res, body) {
 		}
 	}).then(() => {
 		if (res) {
-			res.json({
-				msg: '成功',
-				body: req.body,
-				query: req.query,
-				cookies: req.cookies,
-			});
+			res.end('success')
 		}
 	}).catch(err => {
 		if (res) {
 			console.log(res);
-			// res.json({
-			// 	msg: '请求错误',
-			// 	body: req.body,
-			// 	query: req.query,
-			// 	cookies: req.cookies,
-			// });
 			res.end('error')
 		}
 	});
@@ -59,11 +48,7 @@ function run(req, res) {
 		} else {
 			const body = req.body
 			if (!body) {
-				res.json({
-					msg: '没有请求',
-					body: req.body,
-					query: req.query
-				});
+				res.end('没有请求')
 				return
 			}
 
@@ -81,22 +66,13 @@ function run(req, res) {
 
 function main(req, res, body) {
 	let commits = body.release
-
-	// let commit = commits.find(v => {
-	// 	let message = v.message.split(' ')
-	// 	if (message[0] === 'publish') return true
-	// 	return false
-	// })
 	// let message = 'publish v1.3.5'
 
 	let message = commits.tag_name
 	let releaseContent = commits.body
 	if (!(message && releaseContent)) {
-		res.json({
-			msg: 'relsease 不存在',
-			body: body,
-			content: commits
-		});
+		res.end('relsease 不存在')
+		return
 	}
 
 	r.getIssues().then(res => {
@@ -106,8 +82,6 @@ function main(req, res, body) {
 		data.forEach(v => {
 			content += `> - [uni-ui] Issue closed: [#${v.number} ${v.title}](${v.html_url})\n`
 		})
-		console.log(content);
-
 		r.getRlease().then(res => {
 			let release = res.data
 
@@ -120,9 +94,11 @@ function main(req, res, body) {
 					releaseMessage += `> ${v}\n`
 				})
 				content += releaseMessage
+				send(req, res, content)
+			}else{
+				res.end('不是最新版本')
 			}
 
-			send(req, res, content)
 		}).catch(err => {
 			console.log(err);
 		})
