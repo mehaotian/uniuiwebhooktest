@@ -58,7 +58,7 @@ function run(req, res) {
 					main(req, res, body)
 				}
 			}else{
-				res.end()
+				res.end(body.action || 'no action')
 			}
 		}
 	})
@@ -71,7 +71,7 @@ function main(req, res, body) {
 	let message = commits.tag_name
 	let releaseContent = commits.body
 	if (!(message && releaseContent)) {
-		res.end('relsease 不存在')
+		res.end('no relsease')
 		return
 	}
 
@@ -96,7 +96,7 @@ function main(req, res, body) {
 				content += releaseMessage
 				send(req, res, content)
 			}else{
-				res.end('不是最新版本')
+				res.end("It's not a new version")
 			}
 
 		}).catch(err => {
