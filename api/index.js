@@ -42,6 +42,7 @@ function send(req, res, body) {
 			// 	query: req.query,
 			// 	cookies: req.cookies,
 			// });
+			res.end('error')
 		}
 	});
 }
@@ -71,6 +72,8 @@ function run(req, res) {
 				if (userWhiteList.indexOf(user) !== -1) {
 					main(req, res, body)
 				}
+			}else{
+				res.end()
 			}
 		}
 	})
